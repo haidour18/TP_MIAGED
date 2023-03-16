@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:projetmobile/home.dart';
 
-import '../Authentification.dart';
-import '../profile.dart';
+import 'home.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -15,114 +13,105 @@ class _LoginState extends State<Login> {
   String? _password;
   final _formKey = GlobalKey<FormState>();
   bool _isProcessing = false;
-  final _emailTextController = TextEditingController();
-  final _passwordTextController = TextEditingController();
-  final _focusEmail = FocusNode();
-  final _focusPassword = FocusNode();
+  String? _errorMessage;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        _focusEmail.unfocus();
-        _focusPassword.unfocus();
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            backgroundColor: Colors.deepPurple,
-            title: Text('MIAGED', textAlign: TextAlign.center),
-          ),
-          body: Form(
-              key: _formKey,
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 25,
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: Colors.deepPurple,
+          title: Text('MIAGED', textAlign: TextAlign.center),
+        ),
+        body: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 25,
+                ),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.email_outlined),
+                    hintText: 'Your Email',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(22.0)),
                   ),
-                  TextFormField(
-                    controller: _emailTextController,
-
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email_outlined),
-                      hintText: 'Your Email',
+                  onChanged: (value) => setState(() {
+                    _email = value;
+                  }),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock_outline),
+                      hintText: 'Password',
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(22.0)),
+                          borderRadius: BorderRadius.circular(22.0))),
+                  onChanged: (value) => setState(() {
+                    _password = value;
+                  }),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.deepPurple, // background
+                      onPrimary: Colors.white, // foreground
                     ),
-                    onChanged: (value) => setState(() {
-                      _email = value;
-                    }),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  TextFormField(
-                    controller: _passwordTextController,
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.lock_outline),
-                        hintText: 'Password',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(22.0))),
-                    onChanged: (value) => setState(() {
-                      _password = value;
-                    }),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.deepPurple, // background
-                        onPrimary: Colors.white, // foreground
-                      ),
-                      onPressed:() async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isProcessing = true;
-                          });
-                          User? user = await FireAuth
-                              .signInUsingEmailPassword(
-                            email: _emailTextController.text,
-                            password:
-                            _passwordTextController.text,
-                          );
-
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          _isProcessing = true;
+                          _errorMessage = null;
+                        });
+                        FirebaseAuth.instance
+                            .signInWithEmailAndPassword(
+                            email: _email.toString(),
+                            password: _password.toString())
+                            .then((user) => Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home())))
+                            .catchError((e) {
                           setState(() {
                             _isProcessing = false;
+                            _errorMessage = e.message;
                           });
+                        });
+                      }
+                    },
+                    child: _isProcessing
+                        ? CircularProgressIndicator(
 
-                          if (user != null) {
-                            Navigator.of(context)
-                                .pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    Home(),
-                              ),
-                            );
-                          }
-                        }
-
-                        },
-
-
-                      child: Text(
-                        'Se connecter',
-                      )),
-
-                ],
-              ))),
-    );
+                      color: Colors.deepPurple,
+                    )
+                        : Text(
+                      'Se connecter',
+                    )),
+                if (_errorMessage != null)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _errorMessage!,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+              ],
+            )));
   }
 }

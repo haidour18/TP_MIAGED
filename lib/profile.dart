@@ -4,31 +4,41 @@ import 'package:flutter/material.dart';
 
 import 'login.dart';
 
-
-class Home extends StatefulWidget {
+class Profile extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _ProfileState createState() => _ProfileState();
 }
 
-class _HomeState extends State<Home> {
-  late String myEmail;
-  late String birthday;
+class _ProfileState extends State<Profile> {
+  String? city;
+  String? birthday;
+  String? adresse;
+  String? username;
+  String? code;
+  String? password;
 
+  TextEditingController codeController =
+      TextEditingController(text: "Your initial value");
+  TextEditingController passController =
+      TextEditingController(text: "Your initial value");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
+        centerTitle: true,
+        title: Text('Mon profil'),
+        automaticallyImplyLeading: false,
         actions: [
-          FloatingActionButton(
+          TextButton(
               onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Login()));
+                Update();
               },
-
-           child: Text("logoout"),)
+              child: Text(
+                "Valider",
+                style: TextStyle(color: Colors.white),
+              ))
         ],
       ),
       body: Center(
@@ -37,15 +47,111 @@ class _HomeState extends State<Home> {
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done)
               return Text("Loading data...Please wait");
-            return Column(
-              children: [
-                Text("Email : $myEmail"),
-                Text("Birthday : $birthday"),
-
-              ],
+            var _formKey;
+            return Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Form(
+                        key: _formKey,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 30),
+                              TextFormField(
+                                initialValue: username,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  labelText: 'Username',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                              ),
+                              TextFormField(
+                                initialValue: password,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                                onChanged: (String? value) {
+                                  password = value!;
+                                },
+                              ),
+                              SizedBox(height: 30),
+                              TextFormField(
+                                initialValue: birthday,
+                                decoration: InputDecoration(
+                                  labelText: 'Birthday',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                                onChanged: (value) {
+                                  birthday = value;
+                                },
+                              ),
+                              SizedBox(height: 30),
+                              TextFormField(
+                                initialValue: adresse,
+                                decoration: InputDecoration(
+                                  labelText: 'Adresse',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                                onChanged: (value) {
+                                  adresse = value;
+                                },
+                              ),
+                              SizedBox(height: 30),
+                              TextFormField(
+                                initialValue: city,
+                                decoration: InputDecoration(
+                                  labelText: 'Cité',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                                onChanged: (value) {
+                                  city = value;
+                                },
+                              ),
+                              SizedBox(height: 30),
+                              TextFormField(
+                                initialValue: code,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Code Postal',
+                                  labelStyle:
+                                      TextStyle(color: Colors.deepPurple),
+                                ),
+                                onChanged: (value) {
+                                  code = value;
+                                },
+                              ),
+                            ],
+                          ),
+                        )),
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.deepPurple,
+                      ),
+                      onPressed: () {
+                        Signout();
+                      },
+                      child: Text(
+                        'Se déconnecter',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
+                ],
+              ),
             );
-
-
           },
         ),
       ),
@@ -60,12 +166,43 @@ class _HomeState extends State<Home> {
           .doc(firebaseUser.uid)
           .get()
           .then((ds) {
-        myEmail = ds.data()!['username'];
-        birthday = ds.data()!['birthday'];
+        username = ds.data()!['username'];
+        password = ds.data()!['password'];
 
-        print(myEmail);
+        birthday = ds.data()!['birthday'];
+        adresse = ds.data()!['adresse'];
+        city = ds.data()!['city'];
+        code = ds.data()!['code'];
       }).catchError((e) {
         print(e);
       });
+  }
+
+  ///////////////////FOnctions ici//////////////////
+  Signout() {
+    FirebaseAuth.instance.signOut();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+  }
+
+  Future Update() async {
+    final firebaseUser = await FirebaseAuth.instance.currentUser!;
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(firebaseUser.uid)
+        .update({
+      'city': city,
+      'birthday': birthday,
+      'adresse': adresse,
+      'code': code,
+      'password': password,
+    });
+
+    firebaseUser.updatePassword(password!).then((_) {
+      print("Successfully changed password");
+    }).catchError((error) {
+      print("Password can't be changed" + error.toString());
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
   }
 }
