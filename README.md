@@ -1,5 +1,5 @@
 
-L'application MIAGED Vide dressing est maintenant prête dans sa version produit MVP 100% Fonctionnel avec une user story en plus qui contient les fonctionnalités suivantes :
+L'application MIAGED Vide dressing est maintenant prête dans sa version produit MVP 100% Fonctionnel avec deux user story en plus qui contient les fonctionnalités suivantes :
 
 - US1 (MVP) Login : pour se connecter à l'application, il suffit de saisir les identifiants d'accès suivants : login: ga@esi.com et mdp:12345678.
 
@@ -13,7 +13,7 @@ L'application MIAGED Vide dressing est maintenant prête dans sa version produit
 
 #### Il est important de noter que pour modifier le mot de passe, il faut saisir un mot de passe comportant au moins 6 caractères. Le champ "password" est modifié dans la collection "users" ainsi que dans le tableau d'authentification.
 
-- US6 (MVP)Filtrer sur la liste des vêtements : dans la page d'accueil, l'utilisateur peut filtrer les articles en fonction de leur catégorie (Tous, Femmes, Hommes, Enfants).
+- US6 (Optionnel Filtrer sur la liste des vêtements : dans la page d'accueil, l'utilisateur peut filtrer les articles en fonction de leur catégorie (Tous, Femmes, Hommes, Enfants).
 
 - US7 (Optionnel )Ajouter un vêtement au panier en insérant un lien pour l'image.
 
