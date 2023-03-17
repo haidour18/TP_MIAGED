@@ -34,8 +34,7 @@ class _ProfileState extends State<Profile> {
         actions: [
           TextButton(
        onPressed: () {
-         if (_formKey.currentState!.validate()) {
-Update();         }
+Update();
 
       },
               child: Text(
