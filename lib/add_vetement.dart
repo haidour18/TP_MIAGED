@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:projetmobile/home.dart';
+import 'package:projetmobile/list-vetements.dart';
 
 class AddItem extends StatefulWidget {
   const AddItem({Key? key}) : super(key: key);
@@ -238,7 +240,8 @@ class _AddItemState extends State<AddItem> {
                     onPressed: () async {
                       if (key.currentState!.validate()) {
                         addToList();
-                      }
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home())) ;                     }
                     },
                     child: Text("Ajoutez l'article"))
               ],

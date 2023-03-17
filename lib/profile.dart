@@ -21,6 +21,7 @@ class _ProfileState extends State<Profile> {
       TextEditingController(text: "Your initial value");
   TextEditingController passController =
       TextEditingController(text: "Your initial value");
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +33,11 @@ class _ProfileState extends State<Profile> {
         automaticallyImplyLeading: false,
         actions: [
           TextButton(
-              onPressed: () {
-                Update();
-              },
+       onPressed: () {
+         if (_formKey.currentState!.validate()) {
+Update();         }
+
+      },
               child: Text(
                 "Valider",
                 style: TextStyle(color: Colors.white),
@@ -77,8 +80,21 @@ class _ProfileState extends State<Profile> {
                                   labelStyle:
                                       TextStyle(color: Colors.deepPurple),
                                 ),
-                                onChanged: (String? value) {
-                                  password = value!;
+
+
+                                onChanged: (value) {
+                                  password = value;
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Veuillez entrer du texte';
+                                  } else {
+                                    int? parsedValue = int.tryParse(value);
+                                    if (parsedValue == null || parsedValue <= 6) {
+                                      return 'La valeur doit être supérieure à 6';
+                                    }
+                                  }
+                                  return null;
                                 },
                               ),
                               SizedBox(height: 30),
@@ -157,6 +173,7 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+  ///////////////////FOnctions ici//////////////////
 
   _fetch() async {
     final firebaseUser = await FirebaseAuth.instance.currentUser!;
@@ -178,7 +195,6 @@ class _ProfileState extends State<Profile> {
       });
   }
 
-  ///////////////////FOnctions ici//////////////////
   Signout() {
     FirebaseAuth.instance.signOut();
     Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
@@ -195,11 +211,17 @@ class _ProfileState extends State<Profile> {
       'birthday': birthday,
       'adresse': adresse,
       'code': code,
-      'password': password,
     });
 
     firebaseUser.updatePassword(password!).then((_) {
       print("Successfully changed password");
+
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .update({
+        'password': password,
+      });
     }).catchError((error) {
       print("Password can't be changed" + error.toString());
       //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
