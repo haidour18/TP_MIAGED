@@ -1,5 +1,5 @@
 
-L'application MIAGED Vide dressing est maintenant prête dans sa version produit MVP. Cette version respecte les différents User Stories (US) demandées par le chef de projet. Le MVP de l'application MIAGED Vide dressing contient les fonctionnalités suivantes :
+L'application MIAGED Vide dressing est maintenant prête dans sa version produit MVP 100% Fonctionnel avec une user story en plus qui contient les fonctionnalités suivantes :
 
 - US1 (MVP) Login : pour se connecter à l'application, il suffit de saisir les identifiants d'accès suivants : login: ga@esi.com et mdp:12345678.
 
