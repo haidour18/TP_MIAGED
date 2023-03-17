@@ -9,7 +9,9 @@ L'application MIAGED Vide dressing est maintenant prête dans sa version produit
 
 - US4  (MVP)Panier : l'application dispose d'une page panier qui permet de voir les différents articles ajoutés au panier, de retirer un article et de voir le montant total à payer.
 
-- US5  (MVP) Profil utilisateur : cette section permet à l'utilisateur d'accéder à ses informations de profil pour vérifier et modifier si nécessaire. Les modifications sont validées en cliquant sur le bouton "Valider" en haut de la page, et l'utilisateur peut se déconnecter en cliquant sur le bouton "Déconnecter". Il est important de noter que pour modifier le mot de passe, il faut saisir un mot de passe comportant au moins 6 caractères. Le champ "password" est modifié dans la collection "users" ainsi que dans le tableau d'authentification.
+- US5  (MVP) Profil utilisateur : cette section permet à l'utilisateur d'accéder à ses informations de profil pour vérifier et modifier si nécessaire. Les modifications sont validées en cliquant sur le bouton "Valider" en haut de la page, et l'utilisateur peut se déconnecter en cliquant sur le bouton "Déconnecter". 
+
+##Il est important de noter que pour modifier le mot de passe, il faut saisir un mot de passe comportant au moins 6 caractères. Le champ "password" est modifié dans la collection "users" ainsi que dans le tableau d'authentification.
 
 - US6 (MVP)Filtrer sur la liste des vêtements : dans la page d'accueil, l'utilisateur peut filtrer les articles en fonction de leur catégorie (Tous, Femmes, Hommes, Enfants).
 
